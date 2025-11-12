@@ -41,7 +41,7 @@ API.interceptors.request.use(async (config) => {
   // If expired but no refresh token → logout
   if (!refreshToken) {
     localStorage.clear();
-    window.location.href = "/login";
+    window.location.href = "/auth/login";
     return Promise.reject(new Error("No refresh token found"));
   }
 
@@ -75,7 +75,7 @@ API.interceptors.request.use(async (config) => {
     console.error("Token refresh failed:", err);
     localStorage.clear();
     isRefreshing = false;
-    window.location.href = "/login";
+    window.location.href = "/auth/login";
     return Promise.reject(err);
   }
 });
@@ -95,7 +95,7 @@ API.interceptors.response.use(
 
       if (!refreshToken) {
         localStorage.clear();
-        window.location.href = "/login";
+        window.location.href = "/auth/login";
         return Promise.reject(error);
       }
 
@@ -114,7 +114,7 @@ API.interceptors.response.use(
       } catch (err) {
         console.error("401 → Refresh failed:", err);
         localStorage.clear();
-        window.location.href = "/login";
+        window.location.href = "/auth/login";
         return Promise.reject(err);
       }
     }

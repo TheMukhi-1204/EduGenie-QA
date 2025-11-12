@@ -8,12 +8,10 @@ import {
   otpEmailTemplate,
   transporter,
 } from "../conf/mail.conf.js";
-
 const JWT_SECRET = process.env.JWT_SECRET;
 const REFRESH_SECRET = process.env.REFRESH_SECRET;
 
-// JWT
-
+// Generate Tokens
 export const generateTokens = (user) => {
   const accessToken = jwt.sign(
     { id: user._id, email: user.email, name: user.name, year: user.year },
@@ -27,26 +25,31 @@ export const generateTokens = (user) => {
 
   return { accessToken, refreshToken };
 };
-//Refresh Tokens
+
+// Refresh Tokens
 export const refreshToken = async (req, res) => {
   const { token } = req.body;
   if (!token) return res.status(401).json({ message: "Token required" });
 
   try {
-    const payload = jwt.verify(token, process.env.REFRESH_SECRET);
+    const payload = jwt.verify(token, REFRESH_SECRET);
     const user = await User.findById(payload.id);
     if (!user) return res.status(404).json({ message: "User not found" });
 
     if (!user.refreshTokens.includes(token))
       return res.status(403).json({ message: "Invalid refresh token" });
 
+    // Replace old token
     user.refreshTokens = user.refreshTokens.filter((t) => t !== token);
 
     const newTokens = generateTokens(user);
     user.refreshTokens.push(newTokens.refreshToken);
     await user.save();
 
-    return res.status(200).json(newTokens);
+    return res.status(200).json({
+      accessToken: newTokens.accessToken,
+      refreshToken: newTokens.refreshToken,
+    });
   } catch (err) {
     console.error("refreshToken error:", err);
     return res.status(403).json({ message: "Invalid or expired token" });
