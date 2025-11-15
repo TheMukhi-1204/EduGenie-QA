@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import API from "../../api/axios";
 import { login } from "../../store/authSlice";
-import React, { useState, useEffect } from "react";
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
@@ -149,10 +148,15 @@ export default function Login() {
           backgroundRepeat: "no-repeat",
         }}
       >
-        <div className="my-60 relative z-10 max-w-2xl">
-          <h2 className="text-white text-5xl font-bold mb-2">Welcome to</h2>
-          <h2 className="text-white text-5xl font-bold mb-4">Student Portal</h2>
-          <p className="text-purple-200 text-sm">
+        <div className="absolute inset-0 bg-black/10"></div>
+        <div className="relative z-10 max-w-md self-center lg:mt-[-80px] xl:mt-[-60px]">
+          <h2 className="text-white text-xl lg:text-2xl xl:text-3xl font-bold mb-2 leading-tight">
+            Welcome to
+          </h2>
+          <h2 className="text-white text-xl lg:text-2xl xl:text-3xl font-bold mb-3 leading-tight">
+            Student Portal
+          </h2>
+          <p className="text-purple-200 text-xs lg:text-sm">
             Login to access your account
           </p>
         </div>
