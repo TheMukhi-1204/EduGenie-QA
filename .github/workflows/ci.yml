@@ -17,46 +17,62 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # 2. Setup Node
+      # 2. Setup Node.js
       - name: Setup Node.js
+          # yaha tum 18/20/22 jo use kar rahe ho vo rakh sakte ho
         uses: actions/setup-node@v3
         with:
           node-version: '18'
 
-      # 3. Install Root Dependencies (if mono repo)
+      # 3. Install root dependencies (agar package.json hai)
       - name: Install root dependencies
-        run: npm install
+        run: |
+          if [ -f package.json ]; then
+            npm install
+          else
+            echo "No root package.json, skipping root install"
+          fi
 
-      # 4. Install Frontend Dependencies
+      # 4. Install frontend dependencies
       - name: Install frontend dependencies
         run: |
           cd frontend
           npm install
 
-      # 5. Build Frontend (CI check)
+      # 5. Build frontend (main CI check)
       - name: Build frontend
         run: |
           cd frontend
           npm run build --if-present
 
-      # 6. Install Backend Dependencies
+      # 6. Install backend dependencies
       - name: Install backend dependencies
         run: |
           cd backend
           npm install
 
-      # 7. Backend Lint or Tests (Optional)
-      - name: Run backend tests (optional)
+      # 7. (Optional) Backend tests – SKIP if not configured
+      - name: Run backend tests (if configured)
         run: |
           cd backend
-          npm test --if-present
+          if npm run | grep -q " test"; then
+            echo "Backend test script mil gaya, running tests..."
+            npm run test
+          else
+            echo "No backend test script configured, skipping ✅"
+          fi
 
-      # 8. Frontend Lint or Tests (Optional)
-      - name: Run frontend tests (optional)
+      # 8. (Optional) Frontend tests – SKIP if not configured
+      - name: Run frontend tests (if configured)
         run: |
           cd frontend
-          npm test --if-present
+          if npm run | grep -q " test"; then
+            echo "Frontend test script mil gaya, running tests..."
+            npm run test
+          else
+            echo "No frontend test script configured, skipping ✅"
+          fi
 
-      # 9. Summary output
+      # 9. Summary
       - name: CI completed
-        run: echo "CI checks completed successfully!"
+        run: echo "CI checks (install + build + optional tests) completed successfully ✅"
