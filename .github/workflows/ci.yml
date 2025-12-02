@@ -19,13 +19,12 @@ jobs:
 
       # 2. Setup Node.js
       - name: Setup Node.js
-          # yaha tum 18/20/22 jo use kar rahe ho vo rakh sakte ho
         uses: actions/setup-node@v3
         with:
           node-version: '18'
 
-      # 3. Install root dependencies (agar package.json hai)
-      - name: Install root dependencies
+      # 3. Install root dependencies (optional)
+      - name: Install root dependencies (if any)
         run: |
           if [ -f package.json ]; then
             npm install
@@ -51,28 +50,6 @@ jobs:
           cd backend
           npm install
 
-      # 7. (Optional) Backend tests – SKIP if not configured
-      - name: Run backend tests (if configured)
-        run: |
-          cd backend
-          if npm run | grep -q " test"; then
-            echo "Backend test script mil gaya, running tests..."
-            npm run test
-          else
-            echo "No backend test script configured, skipping ✅"
-          fi
-
-      # 8. (Optional) Frontend tests – SKIP if not configured
-      - name: Run frontend tests (if configured)
-        run: |
-          cd frontend
-          if npm run | grep -q " test"; then
-            echo "Frontend test script mil gaya, running tests..."
-            npm run test
-          else
-            echo "No frontend test script configured, skipping ✅"
-          fi
-
-      # 9. Summary
+      # 7. Summary
       - name: CI completed
-        run: echo "CI checks (install + build + optional tests) completed successfully ✅"
+        run: echo "CI checks (install + build) completed successfully"

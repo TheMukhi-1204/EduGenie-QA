@@ -30,11 +30,32 @@ export default function Login() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    setError("");
     try {
-      const { data } = await API.post("/auth/login", formData);
-      const { user, accessToken, refreshToken } = data;
+      const res = await API.post("/auth/login", {
+        email: formData.email,
+        password: formData.password,
+      });
+
+      const accessToken = res?.data?.accessToken;
+      const refreshToken = res?.data?.refreshToken;
+      const user = res?.data?.user;
+
+      if (!accessToken || !refreshToken) {
+        setError("Login response missing tokens.");
+        return;
+      }
+
+
+      API.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
       dispatch(login({ user, accessToken, refreshToken }));
-      navigate("/");
+
+      const admins = import.meta.env.VITE_ADMIN.split(",").map((s) => s.trim());
+      if (admins.includes(user.email)) {
+        setTimeout(() => navigate("/admin#addNotes"), 0);
+      } else {
+        setTimeout(() => navigate("/"), 0);
+      }
     } catch (error) {
       console.error("Login Error:", error.response?.data || error.message);
       setError(error.response?.data.message);
@@ -140,7 +161,7 @@ export default function Login() {
         }}
       >
         <div className="absolute inset-0 bg-black/10"></div>
-        <div className="relative z-10 max-w-md self-center lg:mt-[-80px] xl:mt-[-60px]">
+        <div className="relative z-10 max-w-md self-center lg:-mt-20 xl:mt-[-60px]">
           <h2 className="text-white text-xl lg:text-2xl xl:text-3xl font-bold mb-2 leading-tight">
             Welcome to
           </h2>
