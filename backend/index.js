@@ -32,17 +32,33 @@ if (!fs.existsSync(uploadsDir)) {
 
 const app = express();
 
-// reset Core Middleware reset
+// Core Middlewares
 app.use(cookieParser());
 app.use(express.json());
-const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:5173";
 
+const allowedOrigins = [
+  "http://localhost:5173",                   // Local Vite dev environment
+  "https://edugenie-4jwf.onrender.com/",          // <-- Yaha apna actual Vercel URL daalo
+];
+
+// CORS
 app.use(
   cors({
-    origin: FRONTEND_URL,
+    origin: function (origin, callback) {
+      // Allow requests with no origin (mobile apps, curl, Postman)
+      if (!origin) return callback(null, true);
+
+      if (allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        console.log("❌ Blocked CORS for origin:", origin);
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
   })
 );
+
 
 // Serve uploaded files
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
