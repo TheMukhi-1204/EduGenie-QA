@@ -38,7 +38,7 @@ app.use(express.json());
 
 const allowedOrigins = [
   "http://localhost:5173",                   // Local Vite dev environment
-  "https://edugenie-4jwf.onrender.com/",          // <-- Yaha apna actual Vercel URL daalo
+  "https://edu-genie-qa.vercel.app",          // Vercel Front URL
 ];
 
 // CORS
