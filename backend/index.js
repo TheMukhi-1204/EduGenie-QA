@@ -70,8 +70,8 @@ app.use("/api/task", authMiddleware, taskRoutes);
 app.use("/api/quiz", authMiddleware, quizRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/progress", authMiddleware, progressRoutes);
-app.use("/api/subjectNotes",  authMiddleware, subjectNotesRoutes);
-app.use("/api/admin",  authMiddleware, adminRoutes);
+app.use("/api/subjectNotes", authMiddleware, subjectNotesRoutes);
+app.use("/api/admin", authMiddleware, adminRoutes);
 app.use("/api/notifications", notificationsRoutes);
 
 // const frontendPath = path.join(__dirname, "../frontend/dist");
